@@ -2,6 +2,7 @@ from scapy.all import IP, TCP, sr1
 import multiprocessing
 import ipaddress
 
+#Funkcija skenē portu norādītajai IP adresei un atgiež True, ja ports ir atvērts, citādi False
 def scan_port(ip, port):
     try:
         syn_packet = IP(dst=ip) / TCP(dport=port, flags="S")
@@ -14,6 +15,7 @@ def scan_port(ip, port):
         return False
     return False
 
+#Funkcija skenē visus norādītos portus un atgriež atvērto portu sarakstu
 def scan_ports(ip, ports):
     open_ports = []
     for port in ports:
@@ -21,10 +23,12 @@ def scan_ports(ip, ports):
             open_ports.append(port)
     return open_ports
 
+#Funkcija, kas izveido procesu, kas skenē portus norādītajai IP adresei un ieraksta rezultātu rindā open_ports
 def worker(ip, ports, result_queue):
     open_ports = scan_ports(ip, ports)
     result_queue.put((ip, open_ports))
 
+#Funkcija, kas pārbauda vai ievadītā IP adrese ir derīga
 def validate_ip(ip):
     try:
         ipaddress.ip_address(ip)
